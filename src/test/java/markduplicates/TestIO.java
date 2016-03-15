@@ -17,8 +17,7 @@ public class TestIO extends TestCase {
         assertEquals(headerAndIterator.header.getSortOrder(), SAMFileHeader.SortOrder.coordinate);
         if(headerAndIterator.iterator.hasNext()){
             SAMRecord record = headerAndIterator.iterator.next();
-            assertEquals(record.getReadName(), "SRR1575247.1655");
-            assertEquals(record.getAlignmentStart(), 151240);
+            assertEquals(record.getReadName(), "SRR1575247.8287");
         }
         headerAndIterator.iterator.close();
 
@@ -29,8 +28,7 @@ public class TestIO extends TestCase {
         assertEquals(headerAndIterator.header.getSortOrder(), SAMFileHeader.SortOrder.coordinate);
         if(headerAndIterator.iterator.hasNext()){
             SAMRecord record = headerAndIterator.iterator.next();
-            assertEquals(record.getReadName(), "SRR1575247.1655");
-            assertEquals(record.getAlignmentStart(), 151240);
+            assertEquals(record.getReadName(), "SRR1575247.8287");
         }
         headerAndIterator.iterator.close();
     }
@@ -55,8 +53,7 @@ public class TestIO extends TestCase {
         headerAndIterator = IOHelper.openInput(outputfile);
         if(headerAndIterator.iterator.hasNext()){
             SAMRecord record = headerAndIterator.iterator.next();
-            assertEquals(record.getReadName(), "SRR1575247.1655");
-            assertEquals(record.getAlignmentStart(), 151240);
+            assertEquals(record.getReadName(), "SRR1575247.8287");
         }
     }
 }

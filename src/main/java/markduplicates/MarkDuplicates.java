@@ -75,10 +75,12 @@ public class MarkDuplicates {
         boolean hasPairNegative = false;
         while(iterator.hasNext()){
             final SAMRecord rec = iterator.next();
+
             if(rec.getReadUnmappedFlag()){
                 if(rec.getReferenceIndex() == -1) { // When we hit the unmapped reads with no coordinate, no reason to continue.
                     break;
                 }else{ // If this read is unmapped but sorted with the mapped reads, just skip it.
+                    readIndexInBamFile ++;
                     continue;
                 }
             } else if(!rec.isSecondaryOrSupplementary()){   // Bam from bwa may has more than two reads with same name.
@@ -97,20 +99,20 @@ public class MarkDuplicates {
                     addReadEndsIntoChunk(readEnds, rec, readNameToReadEndsMap, chunk);
                 }
                 else{ // not a same position, do mark duplicate in chunk
-                    // TODO do duplicate
-                    chunkDuplicateMarker.markDuplicateInChunk(chunk, hasPairPositive, hasPairNegative, duplicateIndexes);
+                    if(chunk.size() > 0) {
+                        chunkDuplicateMarker.markDuplicateInChunk(chunk, hasPairPositive, hasPairNegative, duplicateIndexes);
+                    }
                     chunk.clear();
                     firstElementInChunk = readEnds;
                     addReadEndsIntoChunk(readEnds, rec, readNameToReadEndsMap, chunk);
+
+                    hasPairPositive = false;
+                    hasPairNegative = false;
                     if(rec.getReadPairedFlag() && !rec.getMateUnmappedFlag()){ // is a pair
-                        if(rec.getReadNegativeStrandFlag()) {
+                        if(rec.getReadNegativeStrandFlag())
                             hasPairNegative = true;
-                            hasPairPositive = false;
-                        }
-                        else {
+                        else
                             hasPairPositive = true;
-                            hasPairNegative = false;
-                        }
                     }
                 }
             }
@@ -210,6 +212,10 @@ public class MarkDuplicates {
         ends.read1NegativeStrand = rec.getReadNegativeStrandFlag();
         ends.score = DuplicateScoringStrategy.computeDuplicateScore(rec, DuplicateScoringStrategy.ScoringStrategy.SUM_OF_BASE_QUALITIES);
 
+        //TODO debug
+        ends.readName = rec.getReadName();
+
+
         // Doing this lets the ends object know that it is part of a pair
         if (rec.getReadPairedFlag() && !rec.getMateUnmappedFlag()) {
             ends.read2ReferenceIndex = rec.getMateReferenceIndex();
@@ -220,11 +226,16 @@ public class MarkDuplicates {
     /**
      * Write file into file, and marking duplicate for each record.
      * @param duplicateIndexes record all duplicate indexes.
+     * @param inputFile undeduped file
+     * @param outputFile output file to write
      */
-    private void writeNoneDuplicateIntoFile(SortingLongCollection duplicateIndexes){
+    public void writeNoneDuplicateIntoFile(SortingLongCollection duplicateIndexes, String inputFile, String outputFile){
         final IOHelper.SamHeaderAndIterator headerAndIterator = IOHelper.openInput(inputFile);
         final SAMFileHeader header = headerAndIterator.header;
-        final SAMFileWriter out = IOHelper.getOutput(header, outputFile);
+        final SAMFileHeader outputHeader = header.clone();
+        outputHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+
+        final SAMFileWriter out = IOHelper.getOutput(outputHeader, outputFile);
         final CloseableIterator<SAMRecord> iterator = headerAndIterator.iterator;
 
         long recordInFileIndex = 0;
@@ -235,7 +246,6 @@ public class MarkDuplicates {
             if (!rec.isSecondaryOrSupplementary()) {
                 if (recordInFileIndex == nextDuplicateIndex) {
                     rec.setDuplicateReadFlag(true);
-
                     // Now try and figure out the next duplicate index
                     if (duplicateIndexes.hasNext()) {
                         nextDuplicateIndex = duplicateIndexes.next();
@@ -252,7 +262,9 @@ public class MarkDuplicates {
             }
             recordInFileIndex++;
         }
-
+        duplicateIndexes.cleanup();
+        iterator.close();
+        out.close();
     }
 
     private void run(String[] args){
@@ -265,7 +277,7 @@ public class MarkDuplicates {
         log.info("Start to scan bam file to get duplicate index");
         ChunkDuplicateMarker chunkDuplicateMarker = new ChunkDuplicateMarker();
         SortingLongCollection duplicateIndexes = findDuplicateIndex(chunkDuplicateMarker, inputFile);
-        writeNoneDuplicateIntoFile(duplicateIndexes);
+        writeNoneDuplicateIntoFile(duplicateIndexes, inputFile, outputFile);
     }
 
     public static void main(String[] args){

@@ -22,6 +22,10 @@ public class ReadEndsForMarkDuplicates {
     public int read2ReferenceIndex = -1;
     public int read2Coordinate = -1;
 
+
+    // debug
+    public String readName = "";
+
     /**
      * Returns a single byte that encodes the orientation of the two reads in a pair.
      */

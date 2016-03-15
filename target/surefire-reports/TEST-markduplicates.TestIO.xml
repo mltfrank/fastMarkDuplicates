@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.064" errors="0" skipped="0" tests="2" name="markduplicates.TestIO">
+<testsuite failures="0" time="1.378" errors="0" skipped="0" tests="2" name="markduplicates.TestIO">
   <properties>
     <property name="idea.version" value="14.1.4"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -11,7 +11,7 @@
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="idea.launcher.port" value="7538"/>
+    <property name="idea.launcher.port" value="7535"/>
     <property name="user.script" value=""/>
     <property name="user.country" value="CN"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
@@ -63,6 +63,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase time="0.02" classname="markduplicates.TestIO" name="testOutput"/>
-  <testcase time="0.044" classname="markduplicates.TestIO" name="testInput"/>
+  <testcase time="1.166" classname="markduplicates.TestIO" name="testInput"/>
+  <testcase time="0.21" classname="markduplicates.TestIO" name="testOutput"/>
 </testsuite>

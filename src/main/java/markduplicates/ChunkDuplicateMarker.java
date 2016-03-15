@@ -42,12 +42,15 @@ public class ChunkDuplicateMarker {
                 duplicateIndexes.add(readEnds.read2IndexInFile);
             }
             else if(!readEnds.isPair){
-                if(hasPairNegative && readEnds.read1NegativeStrand)
+                if(hasPairNegative && readEnds.read1NegativeStrand) {
                     duplicateIndexes.add(readEnds.read1IndexInFile);
-                else if(hasPairPositive && !readEnds.read1NegativeStrand)
+                }
+                else if(hasPairPositive && !readEnds.read1NegativeStrand) {
                     duplicateIndexes.add(readEnds.read1IndexInFile);
-                else if(readEnds != maxFrag)
+                }
+                else if(readEnds != maxFrag) {
                     duplicateIndexes.add(readEnds.read1IndexInFile);
+                }
             }
         }
     }
@@ -75,25 +78,25 @@ public class ChunkDuplicateMarker {
                 if(smallChunk.size() > 1)
                     markDuplicateInSmallChunk(smallChunk, hasPairPositive, hasPairNegative, duplicateIndexes);
                 smallChunk.clear();
-                firstInSmallChunk = null;
+                firstInSmallChunk = readEnds;
+                smallChunk.add(firstInSmallChunk);
             }
         }
-        if(smallChunk.size() > 1)
-            markDuplicateInSmallChunk(smallChunk, hasPairPositive, hasPairNegative, duplicateIndexes);
+        markDuplicateInSmallChunk(smallChunk, hasPairPositive, hasPairNegative, duplicateIndexes);
     }
 
     /**
      * Judge if two readEnd are comparable for duplicate.
-     * Note: We only need to judge the first read and orientation of two reads.
-     * Because in our algorithm, pairEnd in chunk are certain to have same read2(they are in same chunk and the latter read is sure to be read2)
      * @param lhs left value
      * @param rhs right value
      * @return if they are comparable
      */
     private boolean areComparableInChunk(final ReadEndsForMarkDuplicates lhs, final ReadEndsForMarkDuplicates rhs) {
-        return lhs.read1ReferenceIndex == rhs.read1ReferenceIndex &&
+        return  lhs.orientation == rhs.orientation &&
                 lhs.read1Coordinate == rhs.read1Coordinate &&
-                lhs.orientation == rhs.orientation;
+                lhs.read2Coordinate == rhs.read2Coordinate &&
+                lhs.read1ReferenceIndex == rhs.read1ReferenceIndex &&
+                lhs.read2ReferenceIndex == rhs.read2ReferenceIndex;
     }
 
     /**
