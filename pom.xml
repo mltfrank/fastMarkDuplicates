@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.ncic.bioinfo</groupId>
-    <artifactId>MultiThreadMarkDuplicates</artifactId>
+    <groupId>org.ncic</groupId>
+    <artifactId>fastDedup</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <build>
@@ -17,7 +17,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>markduplicates.MarkDuplicates</mainClass>
+                            <mainClass>fastdedup.DeduplicatesMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -47,4 +47,5 @@
             <version>4.8.1</version>
         </dependency>
     </dependencies>
+
 </project>
